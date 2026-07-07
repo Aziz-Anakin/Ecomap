@@ -1,0 +1,47 @@
+{
+  "manifest_version": 3,
+  "name": "EcoMap",
+  "version": "0.1.0",
+  "description": "Affiche des données environnementales et un score éco sur la commune visible dans Google Maps.",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_popup": "index.html",
+    "default_title": "EcoMap",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "permissions": ["activeTab"],
+  "host_permissions": [
+    "https://geo.api.gouv.fr/*",
+    "https://air-quality-api.open-meteo.com/*"
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["icons/*.png"],
+      "matches": [
+        "https://www.google.com/*",
+        "https://www.google.fr/*",
+        "https://maps.google.com/*"
+      ]
+    }
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.google.com/maps/*",
+        "https://www.google.fr/maps/*",
+        "https://maps.google.com/*"
+      ],
+      "js": ["content.js"],
+      "css": ["style.css"],
+      "run_at": "document_idle"
+    }
+  ]
+}

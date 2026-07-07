@@ -1,0 +1,365 @@
+/* Style partagé entre la popup et le panneau injecté dans Google Maps.
+   Tout est préfixé .eco- pour ne pas entrer en collision avec le CSS de Maps. */
+
+:root {
+  --eco-bg: #ffffff;
+  --eco-fg: #1f2933;
+  --eco-muted: #6b7280;
+  --eco-border: #e5e7eb;
+  --eco-shadow: 0 6px 24px rgba(0, 0, 0, 0.16);
+  --eco-radius: 14px;
+
+  --eco-grade-A: #16a34a;
+  --eco-grade-B: #65a30d;
+  --eco-grade-C: #d97706;
+  --eco-grade-D: #ea580c;
+  --eco-grade-E: #dc2626;
+}
+
+/* --- Conteneurs --- */
+
+.eco-popup {
+  margin: 0;
+  width: 300px;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: var(--eco-fg);
+  background: var(--eco-bg);
+}
+
+.eco-content {
+  padding: 16px;
+}
+
+/* Bandeau de marque de la popup (réutilise .eco-panel__logo / __brand). */
+.eco-popup__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--eco-border);
+}
+
+/* Panneau injecté dans Google Maps : flottant en haut à droite. */
+.eco-panel {
+  position: fixed;
+  top: 80px;
+  right: 16px;
+  z-index: 2147483647; /* au-dessus de l'UI Maps */
+  width: 270px;
+  box-sizing: border-box;
+  overflow: hidden;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: var(--eco-fg);
+  background: var(--eco-bg);
+  border: 1px solid var(--eco-border);
+  border-radius: var(--eco-radius);
+  box-shadow: var(--eco-shadow);
+}
+
+.eco-panel[hidden],
+.eco-reopen[hidden] {
+  display: none !important;
+}
+
+/* Bandeau de marque + bouton fermer. */
+.eco-panel__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--eco-border);
+}
+
+.eco-panel__logo {
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+}
+
+.eco-panel__brand {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.eco-panel__close {
+  margin-left: auto;
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--eco-muted);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.eco-panel__close:hover {
+  background: var(--eco-border);
+  color: var(--eco-fg);
+}
+
+/* Badge flottant pour rouvrir le panneau après fermeture. */
+.eco-reopen {
+  position: fixed;
+  top: 80px;
+  right: 16px;
+  z-index: 2147483647;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid var(--eco-border);
+  border-radius: 50%;
+  background: var(--eco-bg);
+  box-shadow: var(--eco-shadow);
+  cursor: pointer;
+}
+
+.eco-reopen:hover {
+  transform: scale(1.06);
+}
+
+.eco-reopen img {
+  width: 26px;
+  height: 26px;
+}
+
+.eco-panel__content {
+  padding: 14px 16px 16px;
+  transition: opacity 0.2s ease;
+}
+
+/* Pendant un rechargement : on atténue le contenu au lieu de le remplacer brutalement. */
+.eco-panel--loading .eco-panel__content {
+  opacity: 0.5;
+}
+
+/* Fine barre de progression en haut du panneau pendant le chargement. */
+.eco-panel__bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.eco-panel--loading .eco-panel__bar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 40%;
+  background: var(--eco-grade-A);
+  animation: eco-slide 1s ease-in-out infinite;
+}
+
+@keyframes eco-slide {
+  from { left: -40%; }
+  to { left: 100%; }
+}
+
+/* Apparition en fondu du contenu à chaque mise à jour. */
+@keyframes eco-fade-in {
+  from { opacity: 0; transform: translateY(3px); }
+  to { opacity: 1; transform: none; }
+}
+
+.eco-fade-in {
+  animation: eco-fade-in 0.25s ease;
+}
+
+/* --- En-tête --- */
+
+.eco-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.eco-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.eco-code {
+  font-size: 12px;
+  color: var(--eco-muted);
+}
+
+/* --- Carte de score --- */
+
+.eco-score {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-areas: "value grade" "value label";
+  align-items: center;
+  column-gap: 12px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  border-radius: var(--eco-radius);
+  color: #fff;
+  background: var(--eco-grade-C);
+}
+
+.eco-score--A { background: var(--eco-grade-A); }
+.eco-score--B { background: var(--eco-grade-B); }
+.eco-score--C { background: var(--eco-grade-C); }
+.eco-score--D { background: var(--eco-grade-D); }
+.eco-score--E { background: var(--eco-grade-E); }
+
+.eco-score__value {
+  grid-area: value;
+  font-size: 34px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.eco-score__max {
+  font-size: 14px;
+  font-weight: 600;
+  opacity: 0.8;
+}
+
+.eco-score__grade {
+  grid-area: grade;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.eco-score__label {
+  grid-area: label;
+  font-size: 13px;
+  opacity: 0.9;
+}
+
+/* --- Lignes de données --- */
+
+.eco-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.eco-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 7px 0;
+  font-size: 13px;
+  border-bottom: 1px solid var(--eco-border);
+}
+
+.eco-row:last-child {
+  border-bottom: none;
+}
+
+.eco-row__label {
+  color: var(--eco-muted);
+}
+
+.eco-row__value {
+  font-weight: 600;
+}
+
+/* --- Bloc « À savoir » (légende repliable) --- */
+
+.eco-about {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--eco-border);
+}
+
+.eco-about > summary {
+  cursor: pointer;
+  list-style: none;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--eco-muted);
+}
+
+.eco-about > summary::-webkit-details-marker {
+  display: none;
+}
+
+.eco-about > summary::before {
+  content: "▸ ";
+}
+
+.eco-about[open] > summary::before {
+  content: "▾ ";
+}
+
+.eco-about__text {
+  margin: 8px 0;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--eco-muted);
+}
+
+.eco-about__sources {
+  margin: 8px 0 0;
+  font-size: 11px;
+  color: var(--eco-muted);
+}
+
+.eco-legend {
+  list-style: none;
+  margin: 8px 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.eco-legend__item {
+  display: grid;
+  grid-template-columns: 22px 52px 1fr;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 6px;
+  font-size: 12px;
+  border-radius: 8px;
+}
+
+.eco-legend__item--current {
+  background: var(--eco-border);
+  font-weight: 700;
+}
+
+.eco-legend__grade {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.eco-grade-bg--A .eco-legend__grade { background: var(--eco-grade-A); }
+.eco-grade-bg--B .eco-legend__grade { background: var(--eco-grade-B); }
+.eco-grade-bg--C .eco-legend__grade { background: var(--eco-grade-C); }
+.eco-grade-bg--D .eco-legend__grade { background: var(--eco-grade-D); }
+.eco-grade-bg--E .eco-legend__grade { background: var(--eco-grade-E); }
+
+.eco-legend__range {
+  color: var(--eco-muted);
+}
+
+/* --- États (chargement / erreur) --- */
+
+.eco-message {
+  padding: 8px 0;
+  font-size: 13px;
+  color: var(--eco-muted);
+  text-align: center;
+}
